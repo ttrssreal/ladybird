@@ -4,15 +4,7 @@
 
 pkgs.mkShell {
   inputsFrom = [
-    (pkgs.ladybird.override (prev: {
-      # Apply fix expanding skia's public api
-      # See #4d7b717
-      skia = prev.skia.overrideAttrs (prev: {
-        gnFlags = prev.gnFlags ++ [
-          "extra_cflags+=[\"-DSKCMS_API=__attribute__((visibility(\\\"default\\\")))\"]"
-        ];
-      });
-    }))
+    pkgs.ladybird
   ];
 
   packages =
@@ -29,6 +21,10 @@ pkgs.mkShell {
       pre-commit
       prettier
     ];
+
+  # Fix for: https://github.com/LadybirdBrowser/ladybird/issues/371#issuecomment-2616415434
+  # https://github.com/NixOS/nixpkgs/commit/049a854b4be087eaa3a09012b9c452fbc838dd41
+  NIX_LDFLAGS = "-lGL";
 
   shellHook = ''
     # NOTE: This is required to make it find the wayland platform plugin installed
