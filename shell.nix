@@ -4,7 +4,13 @@
 
 pkgs.mkShell {
   inputsFrom = [
-    pkgs.ladybird
+    (pkgs.ladybird.override (prev: {
+      skia = prev.skia.overrideAttrs (prev: {
+        gnFlags = prev.gnFlags ++ [
+          "extra_cflags_cc=[\"-frtti\"]"
+        ];
+      });
+    }))
   ];
 
   packages =
@@ -15,9 +21,11 @@ pkgs.mkShell {
       qtbase.dev
       qttools
       qtwayland.dev
+      (pkgs.callPackage ./Meta/Lagom/Fuzzers/Fuzzilli/fuzzilli.nix {})
 
       ccache
       clang-tools
+      clang
       pre-commit
       prettier
     ];

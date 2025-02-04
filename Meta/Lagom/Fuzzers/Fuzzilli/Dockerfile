@@ -1,7 +1,5 @@
 # Build the image:
-# $ podman build \
-#       --tag fuzzillijs \
-#       -f ./FuzzilliJs.dockerfile
+# $ podman build --tag fuzzillijs .
 # Run the container:
 # $ podman run \
 #       -it --rm \
@@ -17,14 +15,6 @@
 # NB: There are Dockerfiles & build scripts available for Fuzzilli-supported JS engines,
 # but this doesn't use the same approach - that would require a fair amount of patching
 # which is not worth it, unless we plan to add LibJS support to Fuzzilli upstream.
-
-FROM fedora:39 AS serenity-build
-
-WORKDIR /home
-RUN dnf install -y clang cmake git-core ninja-build
-RUN git clone --depth=1 https://github.com/LadybirdBrowser/ladybird
-
-RUN cd ladybird/Meta/Lagom && ./BuildFuzzers.sh
 
 FROM fedora:39 AS fuzzilli-build
 
@@ -42,9 +32,10 @@ WORKDIR /home
 # This is unfortunate, but we need libswiftCore.so (and possibly other files) from the
 # Swift runtime. The "swift-lang-runtime" package doesn't seem to exist in Fedora :/
 RUN dnf install -y swift-lang procps-ng
-COPY --from=serenity-build /home/serenity/Meta/Lagom/Build/lagom-fuzzers/bin ./bin
-COPY --from=serenity-build /home/serenity/Meta/Lagom/Build/lagom-fuzzers/lib64 ./lib64
+#COPY --from=serenity-build /home/serenity/Meta/Lagom/Build/lagom-fuzzers/bin ./bin
+#COPY --from=serenity-build /home/serenity/Meta/Lagom/Build/lagom-fuzzers/lib64 ./lib64
 COPY --from=fuzzilli-build /home/fuzzilli/.build/x86_64-unknown-linux-gnu/release/FuzzilliCli .
-RUN mkdir fuzzilli-storage
+RUN mkdir storage
 ENV FUZZILLI_CLI_OPTIONS ""
-CMD [ "sh", "-c", "./FuzzilliCli --profile=serenity --storagePath=fuzzilli-storage ${FUZZILLI_CLI_OPTIONS} ./bin/FuzzilliJs" ]
+#CMD [ "sh", "-c", "./FuzzilliCli --profile=serenity --storagePath=storage ${FUZZILLI_CLI_OPTIONS} ./bin/FuzzilliJs" ]
+CMD ["bash"]

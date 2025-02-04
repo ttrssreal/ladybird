@@ -55,6 +55,7 @@ echo "Building Lagom Tools..."
 cmake -GNinja -B Build/tools \
     -DLAGOM_TOOLS_ONLY=ON \
     -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
+    -DLAGOM_TOOL_INSTALL=ON \
     -DCMAKE_INSTALL_PREFIX=Build/tool-install \
     -Dpackage=LagomTools
 ninja -C Build/tools install

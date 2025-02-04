@@ -18,7 +18,10 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        devShells.default = import ./shell.nix { inherit pkgs; };
+        devShells = {
+            default = import ./shell.nix { inherit pkgs; };
+            fuzzilli = import ./Meta/Lagom/Fuzzers/Fuzzilli { inherit pkgs; };
+        };
 
         formatter = pkgs.nixfmt-rfc-style;
       }
