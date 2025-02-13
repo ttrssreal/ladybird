@@ -181,6 +181,16 @@ test("Issue #7044, super property access before super() call", () => {
     new Foo();
 });
 
+test("super property access", () => {
+    class Foo {
+        constructor() {
+            super.prop += "1337";
+        }
+    }
+
+    new Foo();
+});
+
 test("Issue #8574, super property access before super() call", () => {
     var hit = false;
 
